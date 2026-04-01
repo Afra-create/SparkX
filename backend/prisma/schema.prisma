@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id               String            @id @default(uuid())
+  email            String            @unique
+  password         String
+  name             String
+  avatar           String?           @default("https://ui-avatars.com/api/?name=User")
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  marketplaceItems MarketplaceItem[]
+  lostFoundItems   LostFoundItem[]
+  messagesSent     Message[]         @relation("SentMessages")
+  messagesReceived Message[]         @relation("ReceivedMessages")
+}
+
+model MarketplaceItem {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  condition   String   @default("Good")
+  category    String   @default("Other")
+  images      String   // Storing JSON string of image URLs
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model LostFoundItem {
+  id          String   @id @default(uuid())
+  type        String   // "LOST" or "FOUND"
+  title       String
+  description String
+  location    String
+  date        String
+  images      String   // Storing JSON string of image URLs
+  status      String   @default("ACTIVE")
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  content    String
+  senderId   String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Meetup {
+  id        String   @id @default(uuid())
+  item_id   String
+  buyer_id  String
+  seller_id String
+  date      String
+  time      String
+  location  String
+  status    String   @default("scheduled")
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  user_id   String
+  type      String
+  content   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

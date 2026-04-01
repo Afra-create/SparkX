@@ -1,0 +1,14 @@
+node_modules
+.env
+dist
+.vscode
+.DS_Store
+*.local
+dev.db
+dev.db-journal
+pre-loading_animation_1775034347197.png
+# Leave hackathon artifacts out of the repo
+*.png
+*.webp
+*.mp4
+!logo.png
